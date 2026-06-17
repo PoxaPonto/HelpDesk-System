@@ -1,0 +1,47 @@
+import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+
+const navigationItems = [
+  { label: 'Dashboard', path: '/dashboard', marker: 'D' },
+  { label: 'Chamados', path: '/chamados', marker: 'C' },
+  { label: 'Usuarios', path: '/usuarios', roles: ['Admin'], marker: 'U' },
+  { label: 'Categorias', path: '/categorias', roles: ['Admin'], marker: 'G' },
+  { label: 'Relatorios', path: '/relatorios', roles: ['Admin'], marker: 'R' },
+  { label: 'Perfil', path: '/perfil', marker: 'P' },
+];
+
+function Sidebar() {
+  const { user } = useAuth();
+
+  const visibleItems = navigationItems.filter((item) => {
+    return !item.roles || item.roles.includes(user?.role);
+  });
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-brand">
+        <span className="brand-mark">HD</span>
+        <div>
+          <strong>HelpDesk Pro</strong>
+          <small>Service Desk</small>
+        </div>
+      </div>
+
+      <div className="sidebar-profile">
+        <span>{user?.role ?? 'User'}</span>
+        <strong>{user?.name ?? 'Usuario'}</strong>
+      </div>
+
+      <nav className="sidebar-nav" aria-label="Navegacao principal">
+        {visibleItems.map((item) => (
+          <NavLink key={item.path} to={item.path} className="sidebar-link">
+            <span className="sidebar-link-marker">{item.marker}</span>
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
+  );
+}
+
+export default Sidebar;
