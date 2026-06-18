@@ -108,6 +108,8 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+await SeedData.EnsureSeededAsync(app.Services);
+
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())

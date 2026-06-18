@@ -49,8 +49,17 @@ public class TicketService(
             tickets = tickets.Where(ticket => ticket.CategoryId == query.CategoryId.Value);
         }
 
+        var sort = query.Sort?.Trim().ToLower();
+        tickets = sort == "oldest" || sort == "maisantigos"
+            ? tickets.OrderBy(ticket => ticket.CreatedAt)
+            : tickets.OrderByDescending(ticket => ticket.CreatedAt);
+
+        var page = Math.Max(query.Page, 1);
+        var pageSize = Math.Clamp(query.PageSize, 1, 100);
+
         return await tickets
-            .OrderByDescending(ticket => ticket.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(ticket => ToResponse(ticket))
             .ToListAsync();
     }

@@ -2,8 +2,11 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 const navigationItems = [
-  { label: 'Dashboard', path: '/dashboard', marker: 'D' },
-  { label: 'Chamados', path: '/chamados', marker: 'C' },
+  { label: 'Dashboard', path: '/dashboard', roles: ['Admin'], marker: 'D' },
+  { label: 'Meus Chamados', path: '/my-tickets', roles: ['Client'], marker: 'M' },
+  { label: 'Abrir Chamado', path: '/chamados/novo', roles: ['Client'], marker: 'A' },
+  { label: 'Atendimento', path: '/assigned-tickets', roles: ['Technician'], marker: 'T' },
+  { label: 'Chamados', path: '/chamados', roles: ['Admin'], marker: 'C' },
   { label: 'Usuarios', path: '/usuarios', roles: ['Admin'], marker: 'U' },
   { label: 'Categorias', path: '/categorias', roles: ['Admin'], marker: 'G' },
   { label: 'Relatorios', path: '/relatorios', roles: ['Admin'], marker: 'R' },

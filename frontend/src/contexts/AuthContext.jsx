@@ -1,6 +1,8 @@
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login as loginRequest } from '../services/authService';
+import { useToast } from '../hooks/useToast.js';
+import { getHomePath } from '../utils/roleHome.js';
 
 const AuthContext = createContext(null);
 
@@ -26,9 +28,10 @@ function readStoredUser() {
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
+  const toast = useToast();
   const [user, setUser] = useState(readStoredUser);
 
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     const authData = await loginRequest(credentials);
 
     sessionStorage.setItem(STORAGE_KEYS.token, authData.token);
@@ -36,26 +39,36 @@ export function AuthProvider({ children }) {
     sessionStorage.setItem(STORAGE_KEYS.expiresAt, authData.expiresAt);
 
     setUser(authData.user);
-    navigate('/dashboard', { replace: true });
-  };
+    toast?.showToast('Login realizado com sucesso.');
+    navigate(getHomePath(authData.user.role), { replace: true });
+  }, [navigate, toast]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     sessionStorage.removeItem(STORAGE_KEYS.token);
     sessionStorage.removeItem(STORAGE_KEYS.user);
     sessionStorage.removeItem(STORAGE_KEYS.expiresAt);
     setUser(null);
+    toast?.showToast('Sessao encerrada.', 'info');
     navigate('/login', { replace: true });
-  };
+  }, [navigate, toast]);
+
+  const updateStoredUser = useCallback((nextUser) => {
+    sessionStorage.setItem(STORAGE_KEYS.user, JSON.stringify(nextUser));
+    setUser(nextUser);
+  }, []);
 
   const value = useMemo(
     () => ({
       user,
       isAuthenticated: Boolean(user),
       isAdmin: user?.role === 'Admin',
+      isTechnician: user?.role === 'Technician',
+      isClient: user?.role === 'Client',
       login,
       logout,
+      updateStoredUser,
     }),
-    [user],
+    [login, logout, updateStoredUser, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

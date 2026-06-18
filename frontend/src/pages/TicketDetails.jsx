@@ -3,16 +3,19 @@ import { Link, useParams } from 'react-router-dom';
 import Button from '../components/ui/Button.jsx';
 import Loader from '../components/ui/Loader.jsx';
 import { useAuth } from '../hooks/useAuth.js';
+import { useToast } from '../hooks/useToast.js';
 import { createTicketMessage, getTicketMessages } from '../services/messageService.js';
 import { assignTicket, getTicketById, updateTicketStatus } from '../services/ticketService.js';
 import { formatDate } from '../utils/formatDate.js';
 import { priorityLabels } from '../utils/priorityLabels.js';
 import { roleLabels } from '../utils/roleLabels.js';
+import { getHomePath } from '../utils/roleHome.js';
 import { statusLabels, statusOptions } from '../utils/statusLabels.js';
 
 function TicketDetails() {
   const { id } = useParams();
   const { user } = useAuth();
+  const toast = useToast();
   const [ticket, setTicket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
@@ -50,14 +53,24 @@ function TicketDetails() {
     user?.role === 'Admin' || (user?.role === 'Technician' && ticket?.technicianId === user.id);
 
   const handleAssign = async () => {
-    const updated = await assignTicket(ticket.id);
-    setTicket(updated);
-    setSelectedStatus(updated.status);
+    try {
+      const updated = await assignTicket(ticket.id);
+      setTicket(updated);
+      setSelectedStatus(updated.status);
+      toast?.showToast('Chamado assumido com sucesso.');
+    } catch (err) {
+      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel assumir o chamado.', 'error');
+    }
   };
 
   const handleStatusUpdate = async () => {
-    const updated = await updateTicketStatus(ticket.id, selectedStatus);
-    setTicket(updated);
+    try {
+      const updated = await updateTicketStatus(ticket.id, selectedStatus);
+      setTicket(updated);
+      toast?.showToast('Status atualizado com sucesso.');
+    } catch (err) {
+      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel atualizar o status.', 'error');
+    }
   };
 
   const handleSendMessage = async (event) => {
@@ -77,6 +90,9 @@ function TicketDetails() {
         ...current,
         updatedAt: createdMessage.createdAt,
       }));
+      toast?.showToast('Mensagem enviada com sucesso.');
+    } catch (err) {
+      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel enviar a mensagem.', 'error');
     } finally {
       setSendingMessage(false);
     }
@@ -101,7 +117,7 @@ function TicketDetails() {
           <p className="header-eyebrow">Detalhes do chamado</p>
           <h2>{ticket.title}</h2>
         </div>
-        <Link className="btn btn-secondary" to="/chamados">
+        <Link className="btn btn-secondary" to={getHomePath(user?.role)}>
           Voltar
         </Link>
       </div>
@@ -205,12 +221,15 @@ function TicketDetails() {
                   className={`message-bubble role-${message.userRole} ${isMine ? 'message-mine' : ''}`}
                   key={message.id}
                 >
+                  <span className="message-avatar">{getInitials(message.userName)}</span>
+                  <div className="message-meta">
+                    <strong>{roleLabels[message.userRole] ?? message.userRole}: {message.message}</strong>
+                  </div>
                   <div className="message-meta">
                     <strong>{message.userName}</strong>
                     <span>{roleLabels[message.userRole] ?? message.userRole}</span>
                     <time>{formatDate(message.createdAt)}</time>
                   </div>
-                  <p>{message.message}</p>
                 </article>
               );
             })
@@ -236,6 +255,15 @@ function TicketDetails() {
       </section>
     </section>
   );
+}
+
+function getInitials(name) {
+  return name
+    ?.split(' ')
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase() || 'US';
 }
 
 export default TicketDetails;

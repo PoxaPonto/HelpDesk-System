@@ -1,4 +1,5 @@
 import { useAuth } from '../../hooks/useAuth';
+import { roleLabels } from '../../utils/roleLabels.js';
 
 function Header() {
   const { user, logout } = useAuth();
@@ -20,7 +21,7 @@ function Header() {
         <span className="user-avatar">{initials || 'US'}</span>
         <div>
           <strong>{user?.name}</strong>
-          <span>{user?.email} · {user?.role}</span>
+          <span>{user?.email} - {roleLabels[user?.role] ?? user?.role}</span>
         </div>
         <button className="logout-button" type="button" onClick={logout}>
           Sair

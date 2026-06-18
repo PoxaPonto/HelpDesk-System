@@ -14,10 +14,17 @@ namespace HelpDesk.Api.Controllers;
 public class UsersController(IUserService userService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<UserResponseDto>>>> GetAll()
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<UserResponseDto>>>> GetAll([FromQuery] UserQueryDto query)
     {
-        var users = await userService.GetAllAsync();
+        var users = await userService.GetAllAsync(query);
         return Ok(ApiResponse<IReadOnlyList<UserResponseDto>>.Ok(users));
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ApiResponse<UserResponseDto>>> Create(CreateUserDto dto)
+    {
+        var user = await userService.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = user.Id, version = "1" }, ApiResponse<UserResponseDto>.Ok(user, "Usuario criado com sucesso."));
     }
 
     [HttpGet("{id:guid}")]
@@ -38,6 +45,6 @@ public class UsersController(IUserService userService) : ControllerBase
     public async Task<ActionResult<ApiResponse<object>>> Delete(Guid id)
     {
         await userService.DeleteAsync(id);
-        return Ok(ApiResponse<object>.Ok(new { }, "Usuario excluido com sucesso."));
+        return Ok(ApiResponse<object>.Ok(new { }, "Usuario desativado com sucesso."));
     }
 }

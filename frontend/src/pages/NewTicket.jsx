@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input.jsx';
 import { useAuth } from '../hooks/useAuth.js';
+import { useToast } from '../hooks/useToast.js';
 import { getCategories } from '../services/categoryService.js';
 import { createTicket } from '../services/ticketService.js';
 import { priorityOptions } from '../utils/priorityLabels.js';
@@ -10,6 +11,7 @@ import { priorityOptions } from '../utils/priorityLabels.js';
 function NewTicket() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const toast = useToast();
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
     title: '',
@@ -50,9 +52,11 @@ function NewTicket() {
 
     try {
       const ticket = await createTicket(form);
+      toast?.showToast('Chamado criado com sucesso.');
       navigate(`/chamados/${ticket.id}`);
     } catch (err) {
       setError(err.response?.data?.message ?? 'Nao foi possivel criar o chamado.');
+      toast?.showToast('Nao foi possivel criar o chamado.', 'error');
     } finally {
       setLoading(false);
     }

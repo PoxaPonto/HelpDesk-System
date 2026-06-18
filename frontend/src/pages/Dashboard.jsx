@@ -114,12 +114,12 @@ function Dashboard() {
       <div className="charts-grid">
         <ChartPanel title="Chamados por status" data={statusData}>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={statusData}>
+            <BarChart data={statusData} barCategoryGap="32%">
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="label" stroke="#9ca3af" />
-              <YAxis allowDecimals={false} stroke="#9ca3af" />
+              <YAxis allowDecimals={false} stroke="#9ca3af" domain={[0, (max) => Math.max(max, 3)]} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Bar dataKey="value" fill="#7c3aed" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="value" fill="#7c3aed" radius={[6, 6, 0, 0]} maxBarSize={72} />
             </BarChart>
           </ResponsiveContainer>
         </ChartPanel>
@@ -140,12 +140,12 @@ function Dashboard() {
 
         <ChartPanel title="Chamados por categoria" data={dashboard.ticketsByCategory}>
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={dashboard.ticketsByCategory}>
+            <BarChart data={dashboard.ticketsByCategory} barCategoryGap="32%">
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="label" stroke="#9ca3af" />
-              <YAxis allowDecimals={false} stroke="#9ca3af" />
+              <YAxis allowDecimals={false} stroke="#9ca3af" domain={[0, (max) => Math.max(max, 3)]} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Bar dataKey="value" fill="#22c55e" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="value" fill="#22c55e" radius={[6, 6, 0, 0]} maxBarSize={72} />
             </BarChart>
           </ResponsiveContainer>
         </ChartPanel>
@@ -154,10 +154,46 @@ function Dashboard() {
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={dashboard.ticketsByTechnician} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis type="number" allowDecimals={false} stroke="#9ca3af" />
+              <XAxis type="number" allowDecimals={false} stroke="#9ca3af" domain={[0, (max) => Math.max(max, 3)]} />
               <YAxis dataKey="label" type="category" width={110} stroke="#9ca3af" />
               <Tooltip contentStyle={tooltipStyle} />
-              <Bar dataKey="value" fill="#38bdf8" radius={[0, 6, 6, 0]} />
+              <Bar dataKey="value" fill="#38bdf8" radius={[0, 6, 6, 0]} maxBarSize={42} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
+        <ChartPanel title="Tecnicos mais ativos" data={dashboard.activeTechnicians}>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={dashboard.activeTechnicians} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis type="number" allowDecimals={false} stroke="#9ca3af" domain={[0, (max) => Math.max(max, 3)]} />
+              <YAxis dataKey="label" type="category" width={110} stroke="#9ca3af" />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="value" fill="#f59e0b" radius={[0, 6, 6, 0]} maxBarSize={42} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
+        <ChartPanel title="Resolvidos por tecnico" data={dashboard.resolvedTicketsByTechnician}>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={dashboard.resolvedTicketsByTechnician} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis type="number" allowDecimals={false} stroke="#9ca3af" domain={[0, (max) => Math.max(max, 3)]} />
+              <YAxis dataKey="label" type="category" width={110} stroke="#9ca3af" />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="value" fill="#22c55e" radius={[0, 6, 6, 0]} maxBarSize={42} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartPanel>
+
+        <ChartPanel title="Chamados por mes" data={dashboard.ticketsByMonth}>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={dashboard.ticketsByMonth} barCategoryGap="32%">
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="label" stroke="#9ca3af" />
+              <YAxis allowDecimals={false} stroke="#9ca3af" domain={[0, (max) => Math.max(max, 3)]} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Bar dataKey="value" fill="#ef4444" radius={[6, 6, 0, 0]} maxBarSize={72} />
             </BarChart>
           </ResponsiveContainer>
         </ChartPanel>

@@ -12,6 +12,7 @@ dist/
 # Local caches created during validation
 .dotnetappdata/
 .npm-cache/
+.tmp/
 
 # Environment files
 .env

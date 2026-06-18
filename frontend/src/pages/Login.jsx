@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input.jsx';
 import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast.js';
+import { getHomePath } from '../utils/roleHome.js';
 
 function Login() {
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
+  const toast = useToast();
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={getHomePath(user?.role)} replace />;
   }
 
   const handleChange = (event) => {
@@ -28,6 +31,7 @@ function Login() {
       await login(credentials);
     } catch (err) {
       setError(err.response?.data?.Message ?? err.response?.data?.message ?? 'Nao foi possivel entrar.');
+      toast?.showToast('Nao foi possivel entrar.', 'error');
     } finally {
       setLoading(false);
     }
@@ -77,6 +81,10 @@ function Login() {
           <Button type="submit" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </Button>
+
+          <Link className="auth-link" to="/register">
+            Nao possui conta? Cadastre-se
+          </Link>
         </form>
       </section>
     </main>

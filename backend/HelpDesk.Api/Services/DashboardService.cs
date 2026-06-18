@@ -51,7 +51,10 @@ public class DashboardService(AppDbContext context) : IDashboardService
             TicketsByCategory = await GetByCategoryAsync(tickets),
             TicketsByPriority = await GetByPriorityAsync(tickets),
             TicketsByStatus = await GetByStatusAsync(tickets),
-            TicketsByTechnician = await GetByTechnicianAsync(tickets)
+            TicketsByTechnician = await GetByTechnicianAsync(tickets),
+            ActiveTechnicians = await GetActiveTechniciansAsync(tickets),
+            ResolvedTicketsByTechnician = await GetResolvedByTechnicianAsync(tickets),
+            TicketsByMonth = await GetByMonthAsync(tickets)
         };
     }
 
@@ -132,5 +135,58 @@ public class DashboardService(AppDbContext context) : IDashboardService
             })
             .OrderByDescending(item => item.Value)
             .ToListAsync();
+    }
+
+    private static async Task<IReadOnlyList<DashboardChartItemDto>> GetActiveTechniciansAsync(IQueryable<Ticket> tickets)
+    {
+        return await tickets
+            .Where(ticket => ticket.TechnicianId != null)
+            .GroupBy(ticket => ticket.Technician!.Name)
+            .Select(group => new DashboardChartItemDto
+            {
+                Label = group.Key,
+                Value = group.Count()
+            })
+            .OrderByDescending(item => item.Value)
+            .Take(5)
+            .ToListAsync();
+    }
+
+    private static async Task<IReadOnlyList<DashboardChartItemDto>> GetResolvedByTechnicianAsync(IQueryable<Ticket> tickets)
+    {
+        return await tickets
+            .Where(ticket =>
+                ticket.TechnicianId != null &&
+                (ticket.Status == TicketStatus.Resolved || ticket.Status == TicketStatus.Closed))
+            .GroupBy(ticket => ticket.Technician!.Name)
+            .Select(group => new DashboardChartItemDto
+            {
+                Label = group.Key,
+                Value = group.Count()
+            })
+            .OrderByDescending(item => item.Value)
+            .ToListAsync();
+    }
+
+    private static async Task<IReadOnlyList<DashboardChartItemDto>> GetByMonthAsync(IQueryable<Ticket> tickets)
+    {
+        var data = await tickets
+            .GroupBy(ticket => new { ticket.CreatedAt.Year, ticket.CreatedAt.Month })
+            .Select(group => new
+            {
+                group.Key.Year,
+                group.Key.Month,
+                Value = group.Count()
+            })
+            .OrderBy(item => item.Year)
+            .ThenBy(item => item.Month)
+            .ToListAsync();
+
+        return data.Select(item => new DashboardChartItemDto
+            {
+                Label = $"{item.Month:00}/{item.Year}",
+                Value = item.Value
+            })
+            .ToList();
     }
 }

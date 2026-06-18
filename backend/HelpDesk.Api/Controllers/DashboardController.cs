@@ -11,7 +11,7 @@ namespace HelpDesk.Api.Controllers;
 
 [ApiController]
 [ApiVersion(1)]
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("api/v{version:apiVersion}/dashboard")]
 public class DashboardController(IDashboardService dashboardService) : ControllerBase
 {

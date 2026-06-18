@@ -15,4 +15,7 @@ public class DashboardResponseDto
     public IReadOnlyList<DashboardChartItemDto> TicketsByPriority { get; set; } = [];
     public IReadOnlyList<DashboardChartItemDto> TicketsByStatus { get; set; } = [];
     public IReadOnlyList<DashboardChartItemDto> TicketsByTechnician { get; set; } = [];
+    public IReadOnlyList<DashboardChartItemDto> ActiveTechnicians { get; set; } = [];
+    public IReadOnlyList<DashboardChartItemDto> ResolvedTicketsByTechnician { get; set; } = [];
+    public IReadOnlyList<DashboardChartItemDto> TicketsByMonth { get; set; } = [];
 }
