@@ -23,7 +23,7 @@ function Profile() {
       updateStoredUser(updated);
       toast?.showToast('Perfil atualizado com sucesso.');
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel atualizar o perfil.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível atualizar o perfil.', 'error');
     } finally {
       setSavingProfile(false);
     }
@@ -33,7 +33,7 @@ function Profile() {
     event.preventDefault();
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast?.showToast('A confirmacao de senha nao confere.', 'error');
+      toast?.showToast('A confirmação de senha não confere.', 'error');
       return;
     }
 
@@ -44,7 +44,7 @@ function Profile() {
       setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
       toast?.showToast('Senha alterada com sucesso.');
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel alterar a senha.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível alterar a senha.', 'error');
     } finally {
       setSavingPassword(false);
     }

@@ -1,5 +1,5 @@
 export const roleLabels = {
   Admin: 'Administrador',
-  Technician: 'Tecnico',
+  Technician: 'Técnico',
   Client: 'Cliente',
 };

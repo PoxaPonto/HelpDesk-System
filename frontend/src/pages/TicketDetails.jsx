@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Button from '../components/ui/Button.jsx';
 import Loader from '../components/ui/Loader.jsx';
@@ -16,6 +16,7 @@ function TicketDetails() {
   const { id } = useParams();
   const { user } = useAuth();
   const toast = useToast();
+  const messageListRef = useRef(null);
   const [ticket, setTicket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
@@ -24,29 +25,58 @@ function TicketDetails() {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [error, setError] = useState('');
 
+  const loadMessages = useCallback(async () => {
+    const messageData = await getTicketMessages(id);
+    const orderedMessages = orderMessages(messageData);
+
+    setMessages(orderedMessages);
+
+    const lastMessage = orderedMessages.at(-1);
+    if (lastMessage) {
+      setTicket((current) => current
+        ? { ...current, updatedAt: lastMessage.createdAt }
+        : current);
+    }
+  }, [id]);
+
   useEffect(() => {
     async function loadTicket() {
       setLoading(true);
       setError('');
 
       try {
-        const [ticketData, messageData] = await Promise.all([
-          getTicketById(id),
-          getTicketMessages(id),
-        ]);
+        const ticketData = await getTicketById(id);
 
         setTicket(ticketData);
-        setMessages(messageData);
         setSelectedStatus(ticketData.status);
+        await loadMessages();
       } catch (err) {
-        setError(err.response?.data?.message ?? 'Nao foi possivel carregar o chamado.');
+        setError(err.response?.data?.message ?? 'Não foi possível carregar o chamado.');
       } finally {
         setLoading(false);
       }
     }
 
     loadTicket();
-  }, [id]);
+  }, [id, loadMessages]);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      loadMessages().catch(() => {
+        // Mantem o polling silencioso para nao atrapalhar o uso da tela.
+      });
+    }, 3000);
+
+    return () => window.clearInterval(intervalId);
+  }, [loadMessages]);
+
+  useEffect(() => {
+    if (!messageListRef.current) {
+      return;
+    }
+
+    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+  }, [messages]);
 
   const canAssign = user?.role === 'Technician' && ticket && !ticket.technicianId;
   const canUpdateStatus =
@@ -59,7 +89,7 @@ function TicketDetails() {
       setSelectedStatus(updated.status);
       toast?.showToast('Chamado assumido com sucesso.');
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel assumir o chamado.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível assumir o chamado.', 'error');
     }
   };
 
@@ -69,33 +99,43 @@ function TicketDetails() {
       setTicket(updated);
       toast?.showToast('Status atualizado com sucesso.');
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel atualizar o status.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível atualizar o status.', 'error');
     }
   };
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
 
-    if (!messageText.trim()) {
+    if (!messageText.trim() || sendingMessage) {
       return;
     }
 
     setSendingMessage(true);
 
     try {
-      const createdMessage = await createTicketMessage(ticket.id, messageText);
-      setMessages((current) => [...current, createdMessage]);
+      await createTicketMessage(ticket.id, messageText);
+      await loadMessages();
       setMessageText('');
-      setTicket((current) => ({
-        ...current,
-        updatedAt: createdMessage.createdAt,
-      }));
       toast?.showToast('Mensagem enviada com sucesso.');
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel enviar a mensagem.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível enviar a mensagem.', 'error');
     } finally {
       setSendingMessage(false);
     }
+  };
+
+  const handleMessageKeyDown = (event) => {
+    if (event.key !== 'Enter' || event.shiftKey) {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (!messageText.trim() || sendingMessage) {
+      return;
+    }
+
+    event.currentTarget.form?.requestSubmit();
   };
 
   if (loading) {
@@ -143,11 +183,11 @@ function TicketDetails() {
             <strong>{ticket.clientName}</strong>
           </div>
           <div>
-            <span>Tecnico</span>
-            <strong>{ticket.technicianName ?? 'Nao atribuido'}</strong>
+            <span>Técnico</span>
+            <strong>{ticket.technicianName ?? 'Não atribuído'}</strong>
           </div>
           <div>
-            <span>Ultima atualizacao</span>
+            <span>Última atualização</span>
             <strong>{formatDate(ticket.updatedAt)}</strong>
           </div>
         </div>
@@ -176,13 +216,13 @@ function TicketDetails() {
 
       <section className="history-panel">
         <div>
-          <p className="header-eyebrow">Historico</p>
+          <p className="header-eyebrow">Histórico</p>
           <h3>Linha do tempo</h3>
         </div>
 
         <div className="timeline">
           <div>
-            <span>Criacao</span>
+            <span>Criação</span>
             <strong>{formatDate(ticket.createdAt)}</strong>
           </div>
           <div>
@@ -190,11 +230,11 @@ function TicketDetails() {
             <strong>{statusLabels[ticket.status]}</strong>
           </div>
           <div>
-            <span>Atribuicao</span>
-            <strong>{ticket.technicianName ? `Tecnico ${ticket.technicianName}` : 'Sem tecnico atribuido'}</strong>
+            <span>Atribuição</span>
+            <strong>{ticket.technicianName ? `Técnico ${ticket.technicianName}` : 'Sem técnico atribuído'}</strong>
           </div>
           <div>
-            <span>Ultima atividade</span>
+            <span>Última atividade</span>
             <strong>{formatDate(ticket.updatedAt ?? ticket.createdAt)}</strong>
           </div>
         </div>
@@ -209,7 +249,7 @@ function TicketDetails() {
           <span>{messages.length} mensagens</span>
         </div>
 
-        <div className="message-list">
+        <div className="message-list" ref={messageListRef}>
           {messages.length === 0 ? (
             <p className="empty-conversation">Nenhuma mensagem enviada ainda.</p>
           ) : (
@@ -243,6 +283,8 @@ function TicketDetails() {
               id="message"
               value={messageText}
               onChange={(event) => setMessageText(event.target.value)}
+              onKeyDown={handleMessageKeyDown}
+              disabled={sendingMessage}
               rows="4"
               placeholder="Escreva uma resposta para este chamado"
             />
@@ -264,6 +306,14 @@ function getInitials(name) {
     .map((part) => part[0])
     .join('')
     .toUpperCase() || 'US';
+}
+
+function orderMessages(items) {
+  const uniqueMessages = new Map(items.map((message) => [message.id, message]));
+
+  return [...uniqueMessages.values()].sort(
+    (first, second) => new Date(first.createdAt) - new Date(second.createdAt),
+  );
 }
 
 export default TicketDetails;

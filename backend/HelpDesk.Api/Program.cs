@@ -33,7 +33,18 @@ builder.Services.AddApiVersioning(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (builder.Environment.IsProduction())
+    {
+        var databaseUrl = builder.Configuration["DATABASE_URL"]
+            ?? throw new InvalidOperationException("DATABASE_URL nao configurada para Production.");
+
+        options.UseNpgsql(ConvertDatabaseUrlToConnectionString(databaseUrl));
+        return;
+    }
+
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -71,8 +82,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
+        var allowedOrigins = GetAllowedOrigins(builder.Configuration, builder.Environment);
+
         policy
-            .WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [])
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -136,3 +149,48 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static string[] GetAllowedOrigins(IConfiguration configuration, IWebHostEnvironment environment)
+{
+    var origins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+    var frontendUrl = configuration["FRONTEND_URL"];
+
+    if (!string.IsNullOrWhiteSpace(frontendUrl))
+    {
+        origins = [.. origins, frontendUrl.Trim()];
+    }
+
+    origins = origins
+        .Where(origin => !string.IsNullOrWhiteSpace(origin))
+        .Select(origin => origin.Trim().TrimEnd('/'))
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .ToArray();
+
+    if (environment.IsProduction() && origins.Length == 0)
+    {
+        throw new InvalidOperationException("Configure FRONTEND_URL ou Cors__AllowedOrigins__0 em Production.");
+    }
+
+    return origins.Length == 0 ? ["http://localhost:5173"] : origins;
+}
+
+static string ConvertDatabaseUrlToConnectionString(string databaseUrl)
+{
+    var uri = new Uri(databaseUrl);
+    var userInfo = uri.UserInfo.Split(':', 2);
+    var username = Uri.UnescapeDataString(userInfo.ElementAtOrDefault(0) ?? string.Empty);
+    var password = Uri.UnescapeDataString(userInfo.ElementAtOrDefault(1) ?? string.Empty);
+    var database = uri.AbsolutePath.TrimStart('/');
+
+    var builder = new Npgsql.NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = uri.Port > 0 ? uri.Port : 5432,
+        Database = database,
+        Username = username,
+        Password = password,
+        SslMode = Npgsql.SslMode.Require
+    };
+
+    return builder.ConnectionString;
+}

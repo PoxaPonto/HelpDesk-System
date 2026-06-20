@@ -28,7 +28,7 @@ function Register() {
     setError('');
 
     if (form.password !== form.confirmPassword) {
-      setError('A confirmacao de senha nao confere.');
+      setError('A confirmação de senha não confere.');
       return;
     }
 
@@ -39,8 +39,8 @@ function Register() {
       toast?.showToast('Cadastro realizado com sucesso. Entre com seu e-mail e senha.');
       navigate('/login', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Nao foi possivel cadastrar.');
-      toast?.showToast('Nao foi possivel cadastrar.', 'error');
+      setError(err.response?.data?.message ?? 'Não foi possível cadastrar.');
+      toast?.showToast('Não foi possível cadastrar.', 'error');
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,9 @@ function Register() {
     <main className="login-page">
       <section className="login-panel">
         <div className="login-brand">
-          <span className="brand-mark">HD</span>
+          <span className="brand-logo brand-logo-lg" aria-hidden="true">
+            <span className="brand-logo-dot" />
+          </span>
           <div>
             <strong>HelpDesk Pro</strong>
             <span>Service Desk</span>
@@ -75,7 +77,7 @@ function Register() {
           </Button>
 
           <Link className="auth-link" to="/login">
-            Ja possui conta? Entrar
+            Já possui conta? Entrar
           </Link>
         </form>
       </section>

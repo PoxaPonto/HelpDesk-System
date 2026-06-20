@@ -30,8 +30,8 @@ function Login() {
     try {
       await login(credentials);
     } catch (err) {
-      setError(err.response?.data?.Message ?? err.response?.data?.message ?? 'Nao foi possivel entrar.');
-      toast?.showToast('Nao foi possivel entrar.', 'error');
+      setError(err.response?.data?.Message ?? err.response?.data?.message ?? 'Não foi possível entrar.');
+      toast?.showToast('Não foi possível entrar.', 'error');
     } finally {
       setLoading(false);
     }
@@ -41,7 +41,9 @@ function Login() {
     <main className="login-page">
       <section className="login-panel">
         <div className="login-brand">
-          <span className="brand-mark">HD</span>
+          <span className="brand-logo brand-logo-lg" aria-hidden="true">
+            <span className="brand-logo-dot" />
+          </span>
           <div>
             <strong>HelpDesk Pro</strong>
             <span>Service Desk</span>
@@ -83,7 +85,7 @@ function Login() {
           </Button>
 
           <Link className="auth-link" to="/register">
-            Nao possui conta? Cadastre-se
+            Não possui conta? Cadastre-se
           </Link>
         </form>
       </section>

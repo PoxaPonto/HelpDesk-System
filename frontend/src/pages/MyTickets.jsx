@@ -35,7 +35,7 @@ function MyTickets() {
         setTickets(ticketData);
         setCategories(categoryData);
       } catch (err) {
-        setError(err.response?.data?.message ?? 'Nao foi possivel carregar seus chamados.');
+        setError(err.response?.data?.message ?? 'Não foi possível carregar seus chamados.');
       } finally {
         setLoading(false);
       }
@@ -122,11 +122,11 @@ export function TicketTable({ tickets }) {
         <thead>
           <tr>
             <th>Numero</th>
-            <th>Titulo</th>
+            <th>Título</th>
             <th>Categoria</th>
             <th>Prioridade</th>
             <th>Status</th>
-            <th>Tecnico</th>
+            <th>Técnico</th>
             <th>Data</th>
           </tr>
         </thead>
@@ -138,7 +138,7 @@ export function TicketTable({ tickets }) {
               <td>{ticket.categoryName}</td>
               <td><span className={`badge priority-${ticket.priority}`}>{priorityLabels[ticket.priority]}</span></td>
               <td><span className={`badge status-${ticket.status}`}>{statusLabels[ticket.status]}</span></td>
-              <td>{ticket.technicianName ?? 'Nao atribuido'}</td>
+              <td>{ticket.technicianName ?? 'Não atribuído'}</td>
               <td>{formatDate(ticket.createdAt)}</td>
             </tr>
           ))}

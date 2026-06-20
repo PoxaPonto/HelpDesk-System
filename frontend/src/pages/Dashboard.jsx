@@ -36,7 +36,7 @@ function Dashboard() {
         const data = await getDashboard();
         setDashboard(data);
       } catch (err) {
-        setError(err.response?.data?.message ?? 'Nao foi possivel carregar o dashboard.');
+        setError(err.response?.data?.message ?? 'Não foi possível carregar o dashboard.');
       } finally {
         setLoading(false);
       }
@@ -97,7 +97,7 @@ function Dashboard() {
       <div className="page-heading">
         <div>
           <p className="header-eyebrow">Dashboard</p>
-          <h2>Visao analitica</h2>
+          <h2>Visão analítica</h2>
         </div>
         <span className="dashboard-scope">{scopeLabel(user?.role)}</span>
       </div>
@@ -150,7 +150,7 @@ function Dashboard() {
           </ResponsiveContainer>
         </ChartPanel>
 
-        <ChartPanel title="Chamados por tecnico" data={dashboard.ticketsByTechnician}>
+        <ChartPanel title="Chamados por técnico" data={dashboard.ticketsByTechnician}>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={dashboard.ticketsByTechnician} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -174,7 +174,7 @@ function Dashboard() {
           </ResponsiveContainer>
         </ChartPanel>
 
-        <ChartPanel title="Resolvidos por tecnico" data={dashboard.resolvedTicketsByTechnician}>
+        <ChartPanel title="Resolvidos por técnico" data={dashboard.resolvedTicketsByTechnician}>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={dashboard.resolvedTicketsByTechnician} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -223,7 +223,7 @@ function translateLabels(items, labels) {
 }
 
 function scopeLabel(role) {
-  if (role === 'Admin') return 'Visao geral da operacao';
+  if (role === 'Admin') return 'Visão geral da operação';
   if (role === 'Technician') return 'Seus chamados atribuidos';
   return 'Seus chamados';
 }

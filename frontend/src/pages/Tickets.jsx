@@ -46,7 +46,7 @@ function Tickets() {
         setTickets(ticketData);
         setCategories(categoryData);
       } catch (err) {
-        setError(err.response?.data?.message ?? 'Nao foi possivel carregar os chamados.');
+        setError(err.response?.data?.message ?? 'Não foi possível carregar os chamados.');
       } finally {
         setLoading(false);
       }
@@ -158,7 +158,7 @@ function Tickets() {
               <div className="ticket-meta">
                 <span><strong>Categoria</strong>{ticket.categoryName}</span>
                 <span><strong>Cliente</strong>{ticket.clientName}</span>
-                <span><strong>Tecnico</strong>{ticket.technicianName ?? 'Nao atribuido'}</span>
+                <span><strong>Técnico</strong>{ticket.technicianName ?? 'Não atribuído'}</span>
               </div>
 
               <div className="ticket-actions">
@@ -186,7 +186,7 @@ function Tickets() {
       {ticketToDelete && (
         <Modal
           title="Excluir chamado"
-          description={`Deseja excluir "${ticketToDelete.title}"? Esta acao nao pode ser desfeita.`}
+          description={`Deseja excluir "${ticketToDelete.title}"? Esta ação não pode ser desfeita.`}
           onClose={() => setTicketToDelete(null)}
         >
           <Button variant="secondary" onClick={() => setTicketToDelete(null)}>

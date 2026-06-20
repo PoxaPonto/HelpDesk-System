@@ -42,8 +42,8 @@ function AppRoutes() {
           <Route path="chamados/:id" element={<TicketDetails />} />
 
           <Route element={<AdminRoute />}>
-            <Route path="categorias" element={<div className="page-placeholder">Categorias em construcao</div>} />
-            <Route path="relatorios" element={<div className="page-placeholder">Relatorios em construcao</div>} />
+            <Route path="categorias" element={<div className="page-placeholder">Categorias em construção</div>} />
+            <Route path="relatorios" element={<div className="page-placeholder">Relatórios em construção</div>} />
           </Route>
 
           <Route path="perfil" element={<Profile />} />

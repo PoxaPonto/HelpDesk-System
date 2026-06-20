@@ -40,7 +40,7 @@ function Users() {
     try {
       setUsers(await getUsers(query));
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Nao foi possivel carregar os usuarios.');
+      setError(err.response?.data?.message ?? 'Não foi possível carregar os usuários.');
     } finally {
       setLoading(false);
     }
@@ -73,16 +73,16 @@ function Users() {
           role: form.role,
           active: form.active,
         });
-        toast?.showToast('Usuario atualizado.');
+        toast?.showToast('Usuário atualizado.');
       } else {
         await createUser(form);
-        toast?.showToast('Usuario criado.');
+        toast?.showToast('Usuário criado.');
       }
 
       closeModal();
       await loadUsers();
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel salvar o usuario.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível salvar o usuário.', 'error');
     } finally {
       setSaving(false);
     }
@@ -91,10 +91,10 @@ function Users() {
   const handleDeactivate = async (user) => {
     try {
       await deleteUser(user.id);
-      toast?.showToast('Usuario desativado.');
+      toast?.showToast('Usuário desativado.');
       await loadUsers();
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel desativar o usuario.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível desativar o usuário.', 'error');
     }
   };
 
@@ -107,7 +107,7 @@ function Users() {
           <p className="header-eyebrow">Administracao</p>
           <h2>Usuarios</h2>
         </div>
-        <Button onClick={openCreate}>Criar usuario</Button>
+        <Button onClick={openCreate}>Criar usuário</Button>
       </div>
 
       <div className="filters-bar users-filters">
@@ -133,7 +133,7 @@ function Users() {
       {loading ? (
         <div className="centered-state"><Loader label="Carregando usuarios" /></div>
       ) : users.length === 0 ? (
-        <EmptyState title="Nenhum usuario encontrado" description="Ajuste os filtros ou crie um novo usuario." />
+        <EmptyState title="Nenhum usuário encontrado" description="Ajuste os filtros ou crie um novo usuário." />
       ) : (
         <div className="table-card">
           <table className="data-table">
@@ -173,7 +173,7 @@ function Users() {
       )}
 
       {showModal && (
-        <Modal title={modalUser ? 'Editar usuario' : 'Criar usuario'} onClose={closeModal}>
+        <Modal title={modalUser ? 'Editar usuário' : 'Criar usuário'} onClose={closeModal}>
           <form className="modal-form" onSubmit={handleSubmit}>
             <Input id="user-name" label="Nome" name="name" value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} required />
             <Input id="user-email" label="E-mail" name="email" type="email" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} required />
@@ -189,7 +189,7 @@ function Users() {
             {modalUser && (
               <label className="field checkbox-field">
                 <input type="checkbox" checked={form.active} onChange={(event) => setForm((current) => ({ ...current, active: event.target.checked }))} />
-                <span>Usuario ativo</span>
+                <span>Usuário ativo</span>
               </label>
             )}
             <Button type="submit" disabled={saving}>{saving ? 'Salvando...' : 'Salvar'}</Button>

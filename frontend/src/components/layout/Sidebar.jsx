@@ -7,9 +7,9 @@ const navigationItems = [
   { label: 'Abrir Chamado', path: '/chamados/novo', roles: ['Client'], marker: 'A' },
   { label: 'Atendimento', path: '/assigned-tickets', roles: ['Technician'], marker: 'T' },
   { label: 'Chamados', path: '/chamados', roles: ['Admin'], marker: 'C' },
-  { label: 'Usuarios', path: '/usuarios', roles: ['Admin'], marker: 'U' },
+  { label: 'Usuários', path: '/usuarios', roles: ['Admin'], marker: 'U' },
   { label: 'Categorias', path: '/categorias', roles: ['Admin'], marker: 'G' },
-  { label: 'Relatorios', path: '/relatorios', roles: ['Admin'], marker: 'R' },
+  { label: 'Relatórios', path: '/relatorios', roles: ['Admin'], marker: 'R' },
   { label: 'Perfil', path: '/perfil', marker: 'P' },
 ];
 
@@ -23,7 +23,9 @@ function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <span className="brand-mark">HD</span>
+        <span className="brand-logo" aria-hidden="true">
+          <span className="brand-logo-dot" />
+        </span>
         <div>
           <strong>HelpDesk Pro</strong>
           <small>Service Desk</small>
@@ -32,7 +34,7 @@ function Sidebar() {
 
       <div className="sidebar-profile">
         <span>{user?.role ?? 'User'}</span>
-        <strong>{user?.name ?? 'Usuario'}</strong>
+        <strong>{user?.name ?? 'Usuário'}</strong>
       </div>
 
       <nav className="sidebar-nav" aria-label="Navegacao principal">

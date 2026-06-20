@@ -35,7 +35,7 @@ function NewTicket() {
   if (user?.role === 'Technician') {
     return (
       <section className="content-section">
-        <p className="alert alert-warning">Tecnicos nao podem abrir chamados.</p>
+        <p className="alert alert-warning">Técnicos não podem abrir chamados.</p>
       </section>
     );
   }
@@ -55,8 +55,8 @@ function NewTicket() {
       toast?.showToast('Chamado criado com sucesso.');
       navigate(`/chamados/${ticket.id}`);
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Nao foi possivel criar o chamado.');
-      toast?.showToast('Nao foi possivel criar o chamado.', 'error');
+      setError(err.response?.data?.message ?? 'Não foi possível criar o chamado.');
+      toast?.showToast('Não foi possível criar o chamado.', 'error');
     } finally {
       setLoading(false);
     }
@@ -67,14 +67,14 @@ function NewTicket() {
       <div className="page-heading">
         <div>
           <p className="header-eyebrow">Novo chamado</p>
-          <h2>Abrir solicitacao</h2>
+          <h2>Abrir solicitação</h2>
         </div>
       </div>
 
       <form className="ticket-form" onSubmit={handleSubmit}>
         <Input
           id="title"
-          label="Titulo"
+          label="Título"
           name="title"
           value={form.title}
           onChange={handleChange}
@@ -82,7 +82,7 @@ function NewTicket() {
         />
 
         <label className="field" htmlFor="description">
-          <span>Descricao</span>
+          <span>Descrição</span>
           <textarea
             id="description"
             name="description"

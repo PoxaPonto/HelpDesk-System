@@ -19,7 +19,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 22px;
+  min-height: 52px;
+  margin-bottom: 24px;
   font-size: 18px;
   font-weight: 700;
 }
@@ -35,16 +36,56 @@
   font-size: 12px;
 }
 
-.brand-mark {
-  width: 40px;
-  height: 40px;
+.brand-logo {
+  position: relative;
+  width: 42px;
+  height: 42px;
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: var(--primary);
-  box-shadow: 0 12px 24px rgba(124, 58, 237, 0.3);
-  color: white;
-  font-size: 14px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 42%),
+    linear-gradient(135deg, var(--primary), var(--primary-hover));
+  box-shadow: 0 14px 28px rgba(124, 58, 237, 0.34);
+}
+
+.brand-logo::before,
+.brand-logo::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.brand-logo::before {
+  width: 20px;
+  height: 4px;
+  transform: translateY(-7px);
+}
+
+.brand-logo::after {
+  width: 4px;
+  height: 20px;
+  transform: translateX(-8px);
+}
+
+.brand-logo-dot {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 18px rgba(56, 189, 248, 0.75);
+}
+
+.brand-logo-lg {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
 }
 
 .sidebar-profile {
@@ -122,8 +163,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
   background: rgba(11, 16, 32, 0.86);
   backdrop-filter: blur(12px);
+}
+
+.header > div:first-child {
+  min-width: 0;
 }
 
 .header h1 {
@@ -141,7 +187,17 @@
 .header-user {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  flex: 0 1 min(520px, 54vw);
+  min-width: 280px;
+  max-width: 520px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 10px;
+  background:
+    linear-gradient(135deg, rgba(124, 58, 237, 0.12), transparent 58%),
+    rgba(21, 28, 46, 0.78);
+  box-shadow: var(--shadow-soft);
 }
 
 .header-user strong,
@@ -154,9 +210,22 @@
   font-size: 13px;
 }
 
+.header-user div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.header-user strong,
+.header-user div span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .user-avatar {
   width: 40px;
   height: 40px;
+  flex: 0 0 40px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -671,6 +740,7 @@
 }
 
 .logout-button {
+  flex: 0 0 auto;
   min-height: 36px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -689,19 +759,22 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 32px;
+  padding: 40px 24px;
   background:
-    radial-gradient(circle at top left, rgba(124, 58, 237, 0.22), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 28%),
+    radial-gradient(circle at top left, rgba(124, 58, 237, 0.24), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.14), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 38%),
     var(--bg-main);
 }
 
 .login-panel {
-  width: min(420px, 100%);
+  width: min(440px, 100%);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 28px;
-  background: var(--bg-surface);
+  padding: 32px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent),
+    var(--bg-surface);
   box-shadow: var(--shadow);
 }
 
@@ -938,6 +1011,10 @@
     font-size: 0;
   }
 
+  .sidebar-brand {
+    justify-content: center;
+  }
+
   .sidebar-link {
     justify-content: center;
     padding: 10px;
@@ -948,11 +1025,19 @@
   }
 
   .header {
+    gap: 16px;
     padding: 18px 22px;
   }
 
   .header-user div {
     display: none;
+  }
+
+  .header-user {
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: none;
+    padding: 8px;
   }
 
   .charts-grid,
@@ -964,11 +1049,27 @@
   }
 }
 
+@media (max-width: 720px) {
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-user {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .header-user div {
+    display: block;
+  }
+}
+
 .login-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: 14px;
+  margin-bottom: 34px;
 }
 
 .login-brand strong,
@@ -981,9 +1082,13 @@
   font-size: 13px;
 }
 
+.login-brand strong {
+  font-size: 19px;
+}
+
 .login-form {
   display: grid;
-  gap: 18px;
+  gap: 19px;
 }
 
 .login-form h1 {

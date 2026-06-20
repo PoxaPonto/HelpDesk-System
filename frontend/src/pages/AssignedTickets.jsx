@@ -40,7 +40,7 @@ function AssignedTickets() {
       setTickets(ticketData);
       setCategories(categoryData);
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Nao foi possivel carregar chamados.');
+      setError(err.response?.data?.message ?? 'Não foi possível carregar chamados.');
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ function AssignedTickets() {
       toast?.showToast('Chamado assumido com sucesso.');
       await loadData();
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel assumir o chamado.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível assumir o chamado.', 'error');
     }
   };
 
@@ -67,7 +67,7 @@ function AssignedTickets() {
       toast?.showToast(status === 'Closed' ? 'Chamado encerrado.' : 'Status atualizado.');
       await loadData();
     } catch (err) {
-      toast?.showToast(err.response?.data?.message ?? 'Nao foi possivel atualizar o status.', 'error');
+      toast?.showToast(err.response?.data?.message ?? 'Não foi possível atualizar o status.', 'error');
     }
   };
 
@@ -88,7 +88,7 @@ function AssignedTickets() {
       ) : (
         <>
           <TicketSection title="Chamados atribuidos" tickets={assigned} onStatus={handleStatus} />
-          <TicketSection title="Chamados sem tecnico" tickets={unassigned} onAssign={handleAssign} />
+          <TicketSection title="Chamados sem técnico" tickets={unassigned} onAssign={handleAssign} />
         </>
       )}
     </section>
@@ -124,7 +124,7 @@ function TicketSection({ title, tickets, onAssign, onStatus }) {
               <div className="ticket-meta">
                 <span><strong>Categoria</strong>{ticket.categoryName}</span>
                 <span><strong>Cliente</strong>{ticket.clientName}</span>
-                <span><strong>Tecnico</strong>{ticket.technicianName ?? 'Nao atribuido'}</span>
+                <span><strong>Técnico</strong>{ticket.technicianName ?? 'Não atribuído'}</span>
               </div>
               <div className="ticket-actions">
                 <Link className="btn btn-secondary" to={`/chamados/${ticket.id}`}>Responder</Link>
