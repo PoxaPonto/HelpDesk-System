@@ -10,7 +10,6 @@ import Register from '../pages/Register.jsx';
 import TicketDetails from '../pages/TicketDetails.jsx';
 import Tickets from '../pages/Tickets.jsx';
 import Users from '../pages/Users.jsx';
-import AdminRoute from './AdminRoute.jsx';
 import PrivateRoute from './PrivateRoute.jsx';
 import RoleRoute from './RoleRoute.jsx';
 
@@ -40,11 +39,6 @@ function AppRoutes() {
           </Route>
 
           <Route path="chamados/:id" element={<TicketDetails />} />
-
-          <Route element={<AdminRoute />}>
-            <Route path="categorias" element={<div className="page-placeholder">Categorias em construção</div>} />
-            <Route path="relatorios" element={<div className="page-placeholder">Relatórios em construção</div>} />
-          </Route>
 
           <Route path="perfil" element={<Profile />} />
         </Route>
